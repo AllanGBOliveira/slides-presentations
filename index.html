@@ -1,40 +1,371 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+	<meta charset="utf-8">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+	<title>GraphQL a Query Language</title>
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+	<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+	<meta name="author" content="Allan G. B. Oliveira">
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/dracula.css" id="theme">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+
+</head>
+
+<body>
+
+<div class="reveal">
+
+	<!-- Any section element inside of this container is displayed as a slide -->
+	<div class="slides">
+		<section>
+			<a href="https://graphql.org/" target="_blank" rel="noreferrer">
+				<img src="public/images/graphql-logo.png" alt="Graph QL"
+					 style="height: 180px; margin: 0 auto 4rem auto; background: transparent;" class="demo-logo">
+			</a>
+			<h3>GraphQL a Query Language</h3>
+			<p>
+				<small>Deselvondida pelo <a
+						href="https://about.meta.com/br/technologies/facebook-app/">Facebook</a></small>
+			</p>
+		</section>
+
+		<section>
+			<h2>Definição</h2>
+			<p>
+				GraphQL é uma linguagem de consulta para APIs e um ambiente de execução que permite obter os dados
+				solicitados. Desenvolvido pelo Facebook e lançado em 2015, permite aos clientes requisitar exatamente os
+				dados necessários, sem redundâncias.
+			</p>
+		</section>
+
+		<section id="fragment">
+			<h2>Conceitos Básicos do GraphQL</h2>
+			<ul>
+				<li class="fragment">
+					Schema e Types
+					<ul>
+						<li class="fragment fade-in-then-out">
+							<small>
+								(Schema):
+								O Schema é a definição central em GraphQL. Ele descreve todas as operações que podem ser
+								realizadas na API e define como os dados podem ser consultados e modificados.
+							</small>
+						</li>
+						<li class="fragment fade-in-then-out">
+							<small>
+								(Types):
+								Os Types são as unidades básicas de dados no GraphQL. Eles definem a forma e a estrutura
+								dos dados que podem ser retornados pela API.
+							</small>
+						</li>
+					</ul>
+				</li>
+				<li class="fragment">
+					Queries e Mutations
+					<ul>
+						<li class="fragment fade-in-then-out">
+							<small>
+								(Queries):
+								Queries em GraphQL são operações de leitura usadas para obter dados. Elas permitem
+								solicitar
+								exatamente os campos desejados de maneira hierárquica, retornando apenas os dados
+								requisitados.
+							</small>
+						</li>
+						<li class="fragment fade-in-then-out">
+							<small>
+								(Mutations):
+								Mutations em GraphQL são operações de escrita usadas para modificar dados, como criar,
+								atualizar ou deletar. Elas permitem realizar alterações e retornar dados relevantes após
+								a operação.
+							</small>
+						</li>
+					</ul>
+				</li>
+				<li class="fragment">
+					Subscriptions
+					<small class="fragment fade-in-then-out">
+						Em GraphQL, subscriptions são operações que permitem receber atualizações em tempo real sobre
+						mudanças nos dados
+					</small>
+				</li>
+			</ul>
+		</section>
+
+		<section data-auto-animate>
+			<h2 data-id="code-title"> Schema e Types</h2>
+			<pre data-id="code-animation">
+                <code class="hljs javascript" data-trim data-line-numbers="1-8|2|2-7|10-16|18-25|27-30|32-36|38-40">
+                        type Book {
+                          id: ID!
+                          title: String!
+                          description: String
+                          rating: Float
+                          author: String
+                          year: Int
+                        }
+
+                        input BookInput {
+                          title: String!
+                          description: String
+                          rating: Float
+                          author: String!
+                          year: Int!
+                        }
+
+                        input UpdateBookInput {
+                          id: ID!
+                          title: String
+                          description: String
+                          rating: Float
+                          author: String
+                          year: Int
+                        }
+
+                        type Query {
+                          allBooks(search: String): [Book]
+                          getBook(id: ID!): Book!
+                        }
+
+                        type Mutation {
+                          addBook(input: BookInput!): Book!
+                          deleteBook(id: ID!): Boolean
+                          updateBook(input: UpdateBookInput!): Book!
+                        }
+
+                        type Subscription {
+                          bookSub: Book!
+                        }
+
+                </code>
+            </pre>
+		</section>
+
+		<section data-auto-animate>
+			<h2 data-id="code-title"> Queries e Mutations</h2>
+			<pre data-id="code-animation">
+                <code class="hljs javascript" data-trim
+					  data-line-numbers="1-8|1|2|3-5|9-15|9|10|11-14|17-23|25-29|26-28|31-37|31|35|33-37">
+                        query AllBooks($search: String) {
+                          allBooks(search: $search) {
+                          id
+                          title
+                          rating
+                          }
+                        }
+
+                        mutation AddBook($input: BookInput!) {
+                          addBook(input: $input) {
+                          id
+                          title
+                          rating
+                          }
+                        }
+
+                        mutation UpdateBook($id: ID!, $rating: Float) {
+                          updateBook(input: { id: $id, rating: $rating }) {
+                          id
+                          title
+                          rating
+                          }
+                        }
+
+                        fragment BookFragment on Book {
+                          id
+                          title
+                          rating
+                        }
+
+                        #import './book.fragment.gql'
+
+                        subscription bookSubscription {
+                          bookSub {
+                            ...BookFragment
+                          }
+                        }
+
+                </code>
+            </pre>
+		</section>
+		<section id="apollo">
+			<h2>Apollo Client e Vue Apollo</h2>
+			<ul>
+				<li>
+					Apollo Client
+
+					<small class="fragment fade-in-then-out">
+						Apollo Client é uma biblioteca abrangente que permite gerenciar dados em aplicações JavaScript
+						usando GraphQL. Ela facilita a execução de queries e mutations, gerencia o estado do cliente e
+						atualiza automaticamente a interface do usuário conforme os dados mudam.
+					</small>
+				</li>
+				<li>
+					Vue Apollo
+
+					<small class="fragment">
+						O Vue Apollo é uma biblioteca que combina a capacidade de gerenciamento de dados do Apollo
+						Client com a estrutura de componentes reativa do Vue.js. Ela oferece uma maneira eficiente de
+						buscar, gerenciar e atualizar dados em aplicações Vue.js utilizando GraphQL.
+					</small>
+				</li>
+			</ul>
+		</section>
+		<section data-auto-animate>
+			<h2 data-id="code-title">Apollo Client Instance</h2>
+			<pre data-id="code-animation">
+                <code class="hljs javascript" data-trim data-line-numbers="|1-6|8-9|13-15|17-22|24-33|36,38-41,43">
+                <script type="text/template">
+                            import {
+							ApolloClient,
+							createHttpLink,
+							InMemoryCache,
+							split,
+							} from "@apollo/client/core";
+
+							import { WebSocketLink } from '@apollo/client/link/ws'
+							import { getMainDefinition } from '@apollo/client/utilities'
+
+
+							const httpLink = createHttpLink({
+							uri: 'http://localhost:4000/graphql',
+							})
+
+							const wsLink = new WebSocketLink({
+							uri: `ws://localhost:4000/graphql`,
+							options: {
+							reconnect: true,
+							},
+							})
+
+							const link = split(
+							({ query }) => {
+							const definition = getMainDefinition(query)
+							return (
+							definition.kind === 'OperationDefinition' &&
+							definition.operation === 'subscription'
+							)},
+							wsLink,
+							httpLink
+							)
+
+
+							const cache = new InMemoryCache()
+
+							const apolloClient = new ApolloClient({
+							link: link,
+							cache,
+							})
+
+							export default apolloClient
+					</script>
+            </code>
+            </pre>
+		</section>
+		<section data-auto-animate>
+			<h2 data-id="code-title">Apollo Client Provide Instance</h2>
+			<pre data-id="code-animation">
+                <code class="hljs javascript" data-trim data-line-numbers="3,5,6,11,12,13,14,15,16">
+                <script type="text/template">
+                            import './assets/main.css'
+
+							import { createApp, h, provide } from 'vue'
+							import { createPinia } from 'pinia'
+							import apolloClient from "@/plugins/apolloClient"
+							import { DefaultApolloClient } from '@vue/apollo-composable'
+
+							import App from './App.vue'
+							import router from './router'
+
+							const app = createApp({
+							setup() {
+							provide(DefaultApolloClient, apolloClient)
+							},
+							render: () => h(App),
+							})
+
+							app.use(createPinia())
+							app.use(router)
+
+							app.mount('#app')
+
+					</script>
+            </code>
+            </pre>
+		</section>
+		<section data-auto-animate>
+			<h2 data-id="code-title">Vue Apollo</h2>
+			<pre data-id="code-animation">
+                <code class="hljs javascript" data-trim data-line-numbers="|4-10|12-23|25-28">
+                <script type="text/template">
+                    import { computed, type Ref } from 'vue'
+					import gql from 'graphql-tag'
+
+					const ALL_BOOKS_QUERY = gql`
+					query AllBooks($search: String) {
+					allBooks(search: $search) {
+					id
+					title
+					rating
+					}}`
+
+					import { useQuery } from '@vue/apollo-composable'
+
+					export default function useAllBooksQuery(searchTerm: Ref) {
+					const { result, loading, error, subscribeToMore } = useQuery(
+					ALL_BOOKS_QUERY,
+					() => ({
+					search: searchTerm.value
+					}),
+					() => ({
+					debounce: 1000
+
+					}))
+
+					const books = computed(() => result.value?.allBooks ?? null)
+
+					return { books, loading, error, subscribeToMore }
+					}
+					</script>
+            </code>
+            </pre>
+		</section>
+	</div>
+
+</div>
+
+<script src="dist/reveal.js"></script>
+<script src="plugin/zoom/zoom.js"></script>
+<script src="plugin/notes/notes.js"></script>
+<script src="plugin/search/search.js"></script>
+<script src="plugin/markdown/markdown.js"></script>
+<script src="plugin/highlight/highlight.js"></script>
+<script>
+
+	// Also available as an ES module, see:
+	// https://revealjs.com/initialization/
+	Reveal.initialize({
+		controls: true,
+		progress: true,
+		center: true,
+		hash: true,
+
+		// Learn about plugins: https://revealjs.com/plugins/
+		plugins: [RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight]
+	});
+
+</script>
+
+</body>
 </html>
